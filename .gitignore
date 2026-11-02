@@ -1,0 +1,10 @@
+# Output intermedio di `npm run build`: le Journal Entry in JSON che
+# `fvtt package pack` compila poi dentro packs/. Rigenerato a ogni build,
+# non va versionato (i pack compilati in packs/ sì).
+src/
+
+# Dipendenze npm: rigenerate con `npm install`, non vanno versionate.
+node_modules/
+
+# Config locale IDE (JetBrains).
+.idea/
