@@ -20,24 +20,74 @@ Sei un assistente Dungeon Master esperto per campagne D&D 5.5e (regole 2024 revi
 La sequenza esatta degli step vive nelle skill Claude Code, non qui, per evitare che le due
 descrizioni divergano nel tempo:
 
+**Il DM legge solo le dm-notes delle sessioni** (decisione del DM, 2026-10-19, presa in *Shadow of
+the Dragon Queen*): le pipeline producono quelle e aggiornano la memoria che serve agli agenti per
+scriverle (`campagna/party.md`, `campagna/png-incontrati.md`, `campagna/contesto.md`), nient'altro.
+Niente recap separati, luoghi visitati o PNG per capitolo. `rapporti.md`, `missioni-secondarie.md`
+e `fazioni.md` li scrive `/setup-campagna` e poi restano come archivio, senza aggiornamenti.
+
 - **`/setup-campagna`** (`.claude/skills/setup-campagna/SKILL.md`) — una volta sola, prima della
   Sessione 01: invoca `00-campaign-setup` per costruire party e file di campagna a partire dai PG
   che i giocatori portano dalle campagne precedenti.
 - **`/prep-sessione`** (`.claude/skills/prep-sessione/SKILL.md`) — prepara una sessione nuova
   invocando in ordine `01-session-extractor` → `02-session-translator` → `03-session-pc-integrator`
-  → `04-session-missions-integrator` → `02-session-translator` (re-invoke) → `06-session-reviewer`
-  → `09-read-aloud-reviewer`, con `05-chapter-png-briefer` in parallelo (solo a cambio capitolo).
+  → revisione finale (`06-session-reviewer` + `09-read-aloud-reviewer` in un solo sub-agente).
 - **`/aggiorna-sessione`** (`.claude/skills/aggiorna-sessione/SKILL.md`) — dopo che una sessione è
-  stata giocata, invoca `00-recap-updater` → `03-session-pc-integrator` → `08-context-updater`
-  ∥ `07-location-updater`, poi prepara la sessione successiva (di nuovo con la pipeline di
-  prep-sessione), rilegge i testi da leggere con `09-read-aloud-reviewer` e propone la skill
-  `git-release` per pubblicare. Ogni agente gira come sub-agente con il modello indicato nel
-  campo `model:` del proprio frontmatter.
-- **`/aggiorna-locations`** (`.claude/skills/aggiorna-locations/SKILL.md`) — invoca solo
-  `07-location-updater`, per aggiornare i luoghi in isolamento senza rifare tutto il resto.
+  stata giocata: `00-recap-updater` annota le dm-notes giocate, poi in parallelo
+  `08-context-updater` aggiorna la memoria e un sub-agente porta le novità nella sessione dopo
+  (o `/prep-sessione` la crea), infine la revisione finale (06 + 9) e la proposta di
+  `git-release`. Ogni agente gira come sub-agente con il modello indicato nella skill.
 
 Ogni file `ai/agents/*.agent.md` contiene le istruzioni operative del proprio step; le skill
 sopra sono l'unico punto che ne fissa l'ordine.
+
+---
+
+## Struttura delle dm-notes
+
+Decisa dal DM il 2026-10-20: le dm-notes si usano direttamente al tavolo e per preparare la
+sessione, quindi contengono solo ciò che serve a giocarla. **Modello:**
+`../shadow-of-the-dragon-queen-dm/campagna/sessioni/dm-notes-sessione-06.md`, finché il DM non
+indica una sessione di Vecna da usare al suo posto.
+
+**Contengono:**
+- intestazione corta (Fonte, Livello party, Obiettivo, Durata) e un riquadro «Stato in entrata»
+  con i soli fatti che servono;
+- `🎬 SETUP INIZIALE` (o `🎬 RIPRESA` se la serata si era fermata a metà scena);
+- fasi con durata stimata, testi da leggere, testi da recitare, meccaniche con le CD, tesori;
+- per ogni incontro una riga `**Nemici:**` con nome e numero, le ondate (chi arriva, da dove,
+  quando) e le note «Come giocano» (bersagli, movimenti, morale);
+- `[NOTA DM — riservata]` solo per segreti e tattiche concrete, in poche righe;
+- attitudini dei PNG, una riga ciascuno;
+- tabella «Hook PG» per nome del PG, una riga ciascuno, e scene opzionali brevi;
+- «Ricompense» con il solo bottino;
+- dopo la serata, la sezione `📋 ACCADUTO IN SESSIONE`.
+
+**Non contengono:** stat block, Bonus Action e Reaction dei capi (stanno solo in
+`campagna/scontri-adattati/aggiornamenti-schede.md`); XP e note di bilanciamento; note
+organizzative o di design (perché la sessione è fatta così); consigli generici al DM («non
+forzare il tavolo», «usa questa fase per…»); la storia delle decisioni (date, «la fonte ne mette
+otto, portati a dodici»); thread narrativi; rimandi a sessioni facoltative; recap e checklist
+post-sessione; log di revisione degli agenti. Il resoconto di cosa ha fatto un agente va nella sua
+risposta all'orchestratore, mai nel file.
+
+---
+
+## Sessioni Speciali
+
+Decise dal DM il 2026-10-18 in *Shadow of the Dragon Queen* (la prima fu la 05bis). Si
+preparano solo quando il DM le chiede: la campagna resta lineare.
+
+- **Nome del file:** `dm-notes-sessione-NNbis.md`, dove NN è la sessione dopo cui si gioca. Le
+  sessioni successive non si rinumerano, e in Foundry la speciale finisce tra la NN e la NN+1.
+- **Facoltative e fuori dalla progressione:** non sono obbligatorie, quindi non fanno salire di
+  livello e nessuna sessione normale dipende da loro. Il party ci arriva al livello che ha in
+  quel momento.
+- **Difficili, con buone ricompense:** scontri a budget «Alta» della DMG 2024 (punti 4 e 5 di
+  `campagna/scontri-adattati/00-framework.md`) e ricompense che invogliano a giocarle senza
+  passare dagli XP, come oggetti magici o vantaggi concreti per le sessioni dopo.
+- **Numerazione nelle skill:** la «sessione successiva» di una NNbis è la NN+1, e il numero di
+  una nuova sessione normale ignora i file NNbis.
 
 ---
 
@@ -45,20 +95,17 @@ sopra sono l'unico punto che ne fissa l'ordine.
 
 ```
 campagna/
-  contesto.md              ← party, villain, PNG chiave, fazioni, tabella missioni per livello; campo «Capitolo corrente»
-  png-per-capitolo/
-    capitolo-NN/
-      NomePG.md              ← briefing PNG per capitolo (visibile ai giocatori via Foundry pg-backgrounds pack)
-  party.md                 ← stato PG: livello, XP, condizioni, note sessione
-  fazioni.md               ← posizione delle fazioni verso il party
+  contesto.md              ← memoria: stato vivo, villain, PNG chiave; campo «Capitolo corrente» (aggiornato dopo ogni sessione)
+  party.md                 ← memoria: stato PG, livello, XP, oggetti (aggiornato dopo ogni sessione)
+  png-incontrati.md        ← memoria: PNG incontrati e atteggiamenti numerici (aggiornato dopo ogni sessione)
   glossario.md             ← terminologia italiana EN→IT (fonte unica per tutti gli agenti)
-  missioni-secondarie.md   ← campagna lineare, nessuna missione di fazione strutturata
-  png-incontrati.md        ← relationship map per PG (atteggiamenti numerici)
-  rapporti.md              ← note qualitative su rapporti PG-PNG
+  scontri-adattati/
+    00-framework.md          ← regole di bilanciamento: budget in XP, capi, allineamento ai numeri 2024
+    aggiornamenti-schede.md  ← unico posto per le differenze delle schede dal manuale (PF, BA, Reaction, Villain Actions)
   sessioni/
-    dm-notes-sessione-NN.md  ← note sessione (narrative + meccaniche)
-    recaps/
-      recap-sessione-NN.md   ← recap post-sessione compilato dal DM
+    dm-notes-sessione-NN.md  ← note sessione: l'unico file che il DM legge, e l'unico su Foundry
+  archivio, scritto da /setup-campagna e poi non più aggiornato:
+    fazioni.md, missioni-secondarie.md, rapporti.md
 
 fonti/
   campagna/
@@ -70,6 +117,6 @@ fonti/
     *.md                     ← versioni dei background condivise con i giocatori
 
 src/                     ← Foundry VTT source JSON (generato da build-foundry.mjs, non versionato)
-packs/                   ← Foundry VTT LevelDB compilati
+packs/                   ← Foundry VTT LevelDB compilati dalla CI: «Note Campagna» (solo dm-notes) e «Background PG»
 module.json              ← manifest Foundry VTT
 ```

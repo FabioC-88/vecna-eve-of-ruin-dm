@@ -27,20 +27,13 @@
       "path": "./packs/campagna",
       "type": "JournalEntry",
       "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" }
-    },
-    {
-      "name": "campagna-completa",
-      "label": "Campagna Completa",
-      "path": "./packs/campagna-completa",
-      "type": "JournalEntry",
-      "ownership": { "PLAYER": "NONE", "ASSISTANT": "OWNER" }
     }
   ],
   "packFolders": [
     {
       "name": " Vecna Eve of Ruin DM",
       "sorting": "m",
-      "packs": ["campagna", "campagna-completa", "pg-backgrounds"]
+      "packs": ["campagna", "pg-backgrounds"]
     }
   ],
   "url": "https://github.com/FabioC-88/vecna-eve-of-ruin-dm",

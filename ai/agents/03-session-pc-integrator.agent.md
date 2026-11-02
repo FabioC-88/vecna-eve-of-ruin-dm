@@ -5,7 +5,7 @@ language: it
 model: opus
 pipeline_position: 3
 prev_agent: 02-session-translator.agent.md
-next_agent: 04-session-missions-integrator.agent.md
+next_agent: revisione finale (06-session-reviewer + 09-read-aloud-reviewer)
 
 description: |
   Questo agente arricchisce il draft di sessione con tutto il materiale relativo ai personaggi
@@ -32,8 +32,8 @@ Apri e leggi **tutti** questi file:
 ```
 campagna/party.md                         ← Livello, XP, stato attuale di ogni PG
 campagna/png-incontrati.md                ← Atteggiamenti numerici dei PNG verso ogni PG
-campagna/rapporti.md                      ← Rapporti tra PG e PNG (note qualitative)
-campagna/fazioni.md                       ← Posizione fazioni verso party, archi lunghi attivi
+campagna/rapporti.md                      ← Archivio scritto da /setup-campagna: buono per i rapporti PG↔PG e di backstory; lo stato attuale dei PNG è in png-incontrati.md
+campagna/fazioni.md                       ← Posizione fazioni verso party, archi lunghi attivi (archivio, non più aggiornato)
 campagna/contesto.md                      ← Segreti DM su ogni PG, PNG chiave, villain
 fonti/personaggi/*.md                     ← Background di tutti i PG (un file per PG)
 ```
@@ -43,7 +43,7 @@ fonti/personaggi/*.md                     ← Background di tutti i PG (un file 
 ### Step 2 — Identifica gli hook attivi per questa sessione
 
 Per ogni PG, verifica:
-1. **Hook personale principale** (da BG*.txt e party.md): è rilevante per questa sessione?
+1. **Hook personale principale** (da `fonti/personaggi/*.md` e party.md): è rilevante per questa sessione?
 2. **Arco narrativo in corso** (da fazioni.md): c'è un momento di avanzamento nell'arco questa sessione?
 3. **PNG legati al PG** presenti nella sessione (da png-incontrati.md): qual è l'atteggiamento attuale?
 4. **Segreti non ancora rivelati** (da AGENTS.md `[NOTA DM]`): c'è un momento adatto per un indizio?
@@ -52,22 +52,23 @@ Per ogni PG, verifica:
 
 Per ogni hook/arco rilevante trovato:
 
-1. **Se il draft contiene già una scena adatta**, aggiungi una nota DM che suggerisce come usarla per quell'hook:
+1. **Hook PG:** una tabella `## Hook PG` dopo l'ultima fase, **una riga per PG** (nome del PG, non il preludio): il momento della sessione, la meccanica se c'è (CD), cosa ne ricava. Niente riflessioni sul tema o sul tono.
    ```
-   [NOTA DM — riservata] Hook per [Nome PG]: [descrizione del momento e come sfruttarlo]
-   ```
-
-2. **Se manca una scena dedicata**, aggiungi una breve scena opzionale alla fase più appropriata del draft:
-   ```
-   ### Scena Opzionale — Spotlight [Nome PG]
-   **Trigger:** [quando si attiva]
-   **Contenuto:** [cosa succede]
-   **[NOTA DM — riservata]** [info riservate al DM]
+   | PG | Hook |
+   |---|---|
+   | **[Nome PG]** | Chi vede [dettaglio della scena] capisce [cosa] con **Intelligenza (Arcano) CD 13**. |
    ```
 
-3. **Per i PNG presenti nella sessione**, aggiungi sotto ogni loro apparizione:
-   - Atteggiamento attuale verso ogni PG rilevante (formato: `Attitudine verso [PG]: +X / Neutrale / -X`)
-   - Indicazione se c'è un'opportunità per far cambiare l'atteggiamento questa sessione
+2. **Se manca una scena dedicata**, aggiungi una breve scena opzionale sotto la tabella:
+   ```
+   ### Scena Opzionale — [Titolo]
+   **Quando:** [fase] · [cosa succede, in 2-3 righe]
+   > *"[battuta del PNG]"*
+   ```
+
+3. **Per i PNG presenti nella sessione**, sotto ogni scena: `**Attitudine PNG in questa scena:**` con una riga per PNG (valore numerico, come si comporta, se e come può cambiare questa sessione).
+
+Le integrazioni seguono la sezione «Struttura delle dm-notes» di `ai/agents/AGENTS.md`: niente note che spiegano perché un hook funziona.
 
 ### Step 4 — Spotlight bilanciato
 
@@ -84,7 +85,10 @@ Per ogni segreto riservato al DM che coinvolge un PG (da AGENTS.md), valuta:
 - Il segreto può ricevere un **indizio sottile** questa sessione? (non una rivelazione, solo un presagio)
 - In caso sì, suggeriscilo in una `[NOTA DM — riservata]` nella scena più adatta.
 
-**Segreti attivi da tenere a mente:** leggili da `campagna/contesto.md` (sezione Party e PNG Chiave) e da `campagna/party.md` — non tenerne una copia qui, si disallinea.
+**Dove trovare i segreti attivi** (non elencarli qui: cambiano di sessione in sessione):
+- `campagna/contesto.md` (sezione Party e PNG Chiave);
+- le `[NOTA DM — riservata]` e i «Ganci per il DM» delle schede in `fonti/personaggi/`;
+- i thread personali e le inimicizie in `campagna/party.md`, i rapporti di backstory in `campagna/rapporti.md` (archivio: per lo stato attuale vale `campagna/png-incontrati.md`).
 
 **Il filo di Vecna dalle campagne precedenti:** ogni PG arriva da *Curse of Strahd*, *Dragon Heist* o *Shadow of the Dragon Queen* e può aver già visto il simbolo del Culto (la mano con l'occhio) o un suo agente. Controlla in `fonti/campagna/filo-narrativo-multiverso.md` cosa ha visto **quel** PG: quando la scena lo rende naturale, segnala in una `[NOTA DM — riservata]` che il PG può riconoscerlo. Non piantare semi nuovi: in questa campagna si raccolgono quelli già piantati.
 
@@ -93,7 +97,7 @@ Per ogni segreto riservato al DM che coinvolge un PG (da AGENTS.md), valuta:
 ## Formato Output
 
 Restituisci il **draft completo aggiornato** mantenendo la struttura Markdown esistente.
-Le integrazioni vanno inserite **nel punto corretto del documento**, non in appendice.
+Le integrazioni vanno inserite **nel punto corretto del documento**; solo la tabella «Hook PG» e le scene opzionali stanno dopo l'ultima fase.
 Usa sempre `[NOTA DM — riservata]` per distinguere le informazioni riservate.
 
 ---
